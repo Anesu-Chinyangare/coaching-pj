@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "mikestead.dotenv",
+    "humao.rest-client",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "github.vscode-github-actions",
+    "eamodio.gitlens",
+    "ms-vscode.vscode-node-azure-pack",
+    "rangav.vscode-thunder-client"
+  ]
+}

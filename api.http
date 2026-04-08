@@ -1,0 +1,208 @@
+### Nexus CRM — API Tests (REST Client for VS Code)
+### Install: "humao.rest-client" extension, then click "Send Request"
+
+@baseUrl = http://localhost:3000/api
+@token = YOUR_SUPABASE_JWT_TOKEN_HERE
+
+# ─────────────────────────────────────────
+# AUTH
+# ─────────────────────────────────────────
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "agent@anesupj.io",
+  "password": "yourpassword"
+}
+
+### Sign Up
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "email": "newagent@anesupj.io",
+  "password": "securepassword123",
+  "name": "New Agent"
+}
+
+# ─────────────────────────────────────────
+# APPOINTMENTS
+# ─────────────────────────────────────────
+
+### Get all appointments
+GET {{baseUrl}}/appointments?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### Get appointments by status
+GET {{baseUrl}}/appointments?status=confirmed
+Authorization: Bearer {{token}}
+
+### Get appointments for today
+GET {{baseUrl}}/appointments?date_from=2026-04-06T00:00:00Z&date_to=2026-04-06T23:59:59Z
+Authorization: Bearer {{token}}
+
+### Create appointment
+POST {{baseUrl}}/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customer_id": "REPLACE_WITH_CUSTOMER_UUID",
+  "title": "Initial Consultation",
+  "type": "consultation",
+  "scheduled_at": "2026-04-08T09:00:00Z",
+  "duration_min": 60,
+  "meeting_url": "https://meet.google.com/abc-defg-hij",
+  "notes": "First meeting — review business goals",
+  "send_confirmation": true
+}
+
+### Update appointment status
+PATCH {{baseUrl}}/appointments/REPLACE_WITH_APPT_UUID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### Send reminder
+POST {{baseUrl}}/appointments/REPLACE_WITH_APPT_UUID/remind
+Authorization: Bearer {{token}}
+
+### Delete appointment
+DELETE {{baseUrl}}/appointments/REPLACE_WITH_APPT_UUID
+Authorization: Bearer {{token}}
+
+# ─────────────────────────────────────────
+# LEADS
+# ─────────────────────────────────────────
+
+### Get all leads
+GET {{baseUrl}}/leads
+Authorization: Bearer {{token}}
+
+### Get hot leads (score >= 70)
+GET {{baseUrl}}/leads?min_score=70
+Authorization: Bearer {{token}}
+
+### Get leads by stage
+GET {{baseUrl}}/leads?stage=proposal
+Authorization: Bearer {{token}}
+
+### Create lead
+POST {{baseUrl}}/leads
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "first_name": "Jordan",
+  "last_name": "Blake",
+  "email": "jblake@company.com",
+  "phone": "+1-555-9999",
+  "company": "Blake Industries",
+  "source": "linkedin",
+  "stage": "new",
+  "score": 75,
+  "estimated_value": 18000
+}
+
+### Update lead stage
+PATCH {{baseUrl}}/leads/REPLACE_WITH_LEAD_UUID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "stage": "qualified",
+  "score": 82
+}
+
+### Convert lead to customer
+POST {{baseUrl}}/leads/REPLACE_WITH_LEAD_UUID/convert
+Authorization: Bearer {{token}}
+
+# ─────────────────────────────────────────
+# CUSTOMERS
+# ─────────────────────────────────────────
+
+### Get all customers
+GET {{baseUrl}}/customers
+Authorization: Bearer {{token}}
+
+### Search customers
+GET {{baseUrl}}/customers?search=sarah
+Authorization: Bearer {{token}}
+
+### Get customers at risk
+GET {{baseUrl}}/customers?status=at_risk
+Authorization: Bearer {{token}}
+
+### Get customer with full history
+GET {{baseUrl}}/customers/REPLACE_WITH_CUSTOMER_UUID
+Authorization: Bearer {{token}}
+
+### Create customer
+POST {{baseUrl}}/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "first_name": "Alex",
+  "last_name": "Johnson",
+  "email": "alex@techco.io",
+  "phone": "+1-555-1234",
+  "company": "TechCo",
+  "status": "active",
+  "notes": "Enterprise plan interest"
+}
+
+### Update customer status
+PATCH {{baseUrl}}/customers/REPLACE_WITH_CUSTOMER_UUID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "vip",
+  "total_spent": 55000
+}
+
+# ─────────────────────────────────────────
+# ANALYTICS
+# ─────────────────────────────────────────
+
+### Dashboard stats
+GET {{baseUrl}}/analytics/dashboard
+Authorization: Bearer {{token}}
+
+### Pipeline stats
+GET {{baseUrl}}/analytics/pipeline
+Authorization: Bearer {{token}}
+
+### Revenue by month
+GET {{baseUrl}}/analytics/revenue
+Authorization: Bearer {{token}}
+
+### Track client event (no auth needed)
+POST {{baseUrl}}/analytics/track
+Content-Type: application/json
+
+{
+  "event_name": "page_view",
+  "event_data": { "page": "/dashboard" },
+  "session_id": "sess_abc123"
+}
+
+# ─────────────────────────────────────────
+# HEALTH
+# ─────────────────────────────────────────
+
+### Health check
+GET http://localhost:3000/health
+
+### Robots.txt
+GET http://localhost:3000/robots.txt
+
+### Sitemap
+GET http://localhost:3000/sitemap.xml

@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "▶ Run Server",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/server.js",
+      "envFile": "${workspaceFolder}/.env",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🧪 Run Tests",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "--coverage"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🌱 Run Seed Script",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/scripts/seed.js",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal"
+    }
+  ]
+}

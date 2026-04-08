@@ -1,0 +1,30 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.rulers": [100],
+  "eslint.enable": true,
+  "eslint.validate": ["javascript"],
+  "files.exclude": {
+    "node_modules": true,
+    "coverage": true,
+    "logs": true
+  },
+  "search.exclude": {
+    "node_modules": true,
+    "coverage": true
+  },
+  "javascript.suggest.autoImports": true,
+  "terminal.integrated.env.osx": {
+    "NODE_ENV": "development"
+  },
+  "terminal.integrated.env.linux": {
+    "NODE_ENV": "development"
+  },
+  "terminal.integrated.env.windows": {
+    "NODE_ENV": "development"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
