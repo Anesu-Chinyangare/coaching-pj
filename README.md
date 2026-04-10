@@ -1,4 +1,4 @@
-# Nexus CRM
+# Anesu PJ
 
 Appointment booking, lead tracking & customer management platform built with Node.js, Express, and Supabase.
 
@@ -6,24 +6,24 @@ Appointment booking, lead tracking & customer management platform built with Nod
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Runtime | Node.js 18+ |
-| Framework | Express.js |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth (JWT) |
-| Email | Nodemailer (SMTP) |
-| Analytics | Google Analytics 4 (Measurement Protocol) |
-| Deployment | Vercel |
-| CI/CD | GitHub Actions |
-| Testing | Jest + Supertest |
+| Layer      | Technology                                |
+| ---------- | ----------------------------------------- |
+| Runtime    | Node.js 18+                               |
+| Framework  | Express.js                                |
+| Database   | Supabase (PostgreSQL)                     |
+| Auth       | Supabase Auth (JWT)                       |
+| Email      | Nodemailer (SMTP)                         |
+| Analytics  | Google Analytics 4 (Measurement Protocol) |
+| Deployment | Vercel                                    |
+| CI/CD      | GitHub Actions                            |
+| Testing    | Jest + Supertest                          |
 
 ---
 
 ## Project Structure
 
 ```
-nexus-crm/
+anesu-pj/
 ├── .github/
 │   └── workflows/
 │       └── ci-cd.yml          # GitHub Actions CI/CD pipeline
@@ -102,19 +102,21 @@ nexus-crm/
 
 Open VS Code, then press `Ctrl+Shift+X` (Windows/Linux) or `Cmd+Shift+X` (macOS) to open Extensions. Search for and install:
 
-| Extension | Purpose |
-|-----------|---------|
-| **ESLint** (dbaeumer.vscode-eslint) | Real-time linting |
-| **Prettier** (esbenp.prettier-vscode) | Auto-formatting |
-| **DotENV** (mikestead.dotenv) | .env syntax highlighting |
-| **REST Client** (humao.rest-client) | Test API endpoints inside VS Code |
-| **GitLens** (eamodio.gitlens) | Enhanced Git integration |
-| **Thunder Client** (rangav.vscode-thunder-client) | Postman-like API testing |
+| Extension                                         | Purpose                           |
+| ------------------------------------------------- | --------------------------------- |
+| **ESLint** (dbaeumer.vscode-eslint)               | Real-time linting                 |
+| **Prettier** (esbenp.prettier-vscode)             | Auto-formatting                   |
+| **DotENV** (mikestead.dotenv)                     | .env syntax highlighting          |
+| **REST Client** (humao.rest-client)               | Test API endpoints inside VS Code |
+| **GitLens** (eamodio.gitlens)                     | Enhanced Git integration          |
+| **Thunder Client** (rangav.vscode-thunder-client) | Postman-like API testing          |
 
 Or install all at once — open the Command Palette (`Ctrl+Shift+P`) and run:
+
 ```
 Extensions: Show Recommended Extensions
 ```
+
 (The `.vscode/extensions.json` in this project auto-suggests them all.)
 
 ### Step 4: Configure VS Code for Node.js
@@ -231,24 +233,25 @@ JWT_SECRET=change-this-to-a-long-random-string
 ```
 
 ### Getting a Gmail App Password
+
 1. Go to Google Account → Security
 2. Enable 2-Step Verification
 3. Go to **App Passwords** → Generate password for "Mail"
 4. Use that 16-character password as `SMTP_PASS`
 
 ### Getting Google Analytics credentials
-1. Go to **https://analytics.google.com** → Admin
-2. Create a Property → Web stream
-3. Copy the **Measurement ID** (G-XXXXXXXXXX)
-4. Go to **Admin → Data Streams → your stream → Measurement Protocol API secrets**
-5. Create a secret and copy its value
+
+. Go to **https://analytics.google.com** → Admin 2. Create a Property → Web stream 3. Copy the **Measurement ID** (G-XXXXXXXXXX) 4. Go to **Admin → Data Streams → your stream → Measurement Protocol API secrets** 5. Create a secret and copy its value
+1
 
 ---
 
 ## Part 4 — API Reference
 
 ### Authentication
+
 All API routes (except `/api/analytics/track` and `/api/auth/*`) require:
+
 ```
 Authorization: Bearer YOUR_SUPABASE_JWT_TOKEN
 ```
@@ -256,46 +259,51 @@ Authorization: Bearer YOUR_SUPABASE_JWT_TOKEN
 ### Endpoints
 
 #### Appointments
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/appointments` | List appointments (filter by `status`, `date_from`, `date_to`) |
-| GET | `/api/appointments/:id` | Get single appointment with customer |
-| POST | `/api/appointments` | Create appointment + send confirmation email |
-| PATCH | `/api/appointments/:id` | Update appointment |
-| DELETE | `/api/appointments/:id` | Delete appointment |
-| POST | `/api/appointments/:id/remind` | Send reminder email |
+
+| Method | Path                           | Description                                                    |
+| ------ | ------------------------------ | -------------------------------------------------------------- |
+| GET    | `/api/appointments`            | List appointments (filter by `status`, `date_from`, `date_to`) |
+| GET    | `/api/appointments/:id`        | Get single appointment with customer                           |
+| POST   | `/api/appointments`            | Create appointment + send confirmation email                   |
+| PATCH  | `/api/appointments/:id`        | Update appointment                                             |
+| DELETE | `/api/appointments/:id`        | Delete appointment                                             |
+| POST   | `/api/appointments/:id/remind` | Send reminder email                                            |
 
 #### Leads
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/leads` | List leads (filter by `stage`, `source`, `min_score`) |
-| POST | `/api/leads` | Create lead |
-| PATCH | `/api/leads/:id` | Update lead / change stage |
-| POST | `/api/leads/:id/convert` | Convert lead to customer |
-| DELETE | `/api/leads/:id` | Delete lead |
+
+| Method | Path                     | Description                                           |
+| ------ | ------------------------ | ----------------------------------------------------- |
+| GET    | `/api/leads`             | List leads (filter by `stage`, `source`, `min_score`) |
+| POST   | `/api/leads`             | Create lead                                           |
+| PATCH  | `/api/leads/:id`         | Update lead / change stage                            |
+| POST   | `/api/leads/:id/convert` | Convert lead to customer                              |
+| DELETE | `/api/leads/:id`         | Delete lead                                           |
 
 #### Customers
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/customers` | List customers (filter by `status`, `search`) |
-| GET | `/api/customers/:id` | Get customer + appointments + activity history |
-| POST | `/api/customers` | Create customer |
-| PATCH | `/api/customers/:id` | Update customer |
-| DELETE | `/api/customers/:id` | Delete customer |
+
+| Method | Path                 | Description                                    |
+| ------ | -------------------- | ---------------------------------------------- |
+| GET    | `/api/customers`     | List customers (filter by `status`, `search`)  |
+| GET    | `/api/customers/:id` | Get customer + appointments + activity history |
+| POST   | `/api/customers`     | Create customer                                |
+| PATCH  | `/api/customers/:id` | Update customer                                |
+| DELETE | `/api/customers/:id` | Delete customer                                |
 
 #### Analytics
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/analytics/dashboard` | KPI stats for dashboard |
-| GET | `/api/analytics/pipeline` | Pipeline value by stage |
-| GET | `/api/analytics/revenue` | Revenue by month |
-| POST | `/api/analytics/track` | Track frontend event (no auth) |
+
+| Method | Path                       | Description                    |
+| ------ | -------------------------- | ------------------------------ |
+| GET    | `/api/analytics/dashboard` | KPI stats for dashboard        |
+| GET    | `/api/analytics/pipeline`  | Pipeline value by stage        |
+| GET    | `/api/analytics/revenue`   | Revenue by month               |
+| POST   | `/api/analytics/track`     | Track frontend event (no auth) |
 
 ---
 
 ## Part 5 — Testing API endpoints in VS Code
 
 Open `api.http` in VS Code (requires REST Client extension):
+
 1. Replace `YOUR_SUPABASE_JWT_TOKEN_HERE` with a real token
 2. Replace UUID placeholders with real IDs from your database
 3. Click **"Send Request"** above any request block
@@ -305,23 +313,27 @@ Open `api.http` in VS Code (requires REST Client extension):
 ## Part 6 — Deploying to Vercel
 
 ### Step 1: Install Vercel CLI
+
 ```bash
 npm install -g vercel
 ```
 
 ### Step 2: Login
+
 ```bash
 vercel login
 ```
 
 ### Step 3: Link your project
+
 ```bash
 vercel link
 ```
 
 ### Step 4: Add environment variables to Vercel
+
 ```bash
-vercel env add SUPABASE_URL
+vercel env add SUPABASE_URL`
 vercel env add SUPABASE_ANON_KEY
 vercel env add SUPABASE_SERVICE_ROLE_KEY
 vercel env add JWT_SECRET
@@ -336,17 +348,19 @@ vercel env add NODE_ENV   # set to: production
 Or set them in the Vercel dashboard under **Project → Settings → Environment Variables**.
 
 ### Step 5: Deploy
+
 ```bash
 vercel --prod
 ```
 
-Your app is live at `https://nexus-crm.vercel.app` (or your custom domain).
+Your app is live at `https://anesu-pj.vercel.app` (or your custom domain).
 
 ---
 
 ## Part 7 — GitHub & CI/CD Setup
 
 ### Step 1: Create a GitHub repository
+
 ```bash
 git init
 git add .
@@ -359,17 +373,18 @@ git push -u origin main
 
 Go to your repo → **Settings → Secrets and Variables → Actions** and add:
 
-| Secret | Value |
-|--------|-------|
-| `VERCEL_TOKEN` | From vercel.com → Account Settings → Tokens |
-| `SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_ANON_KEY` | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
-| `CODECOV_TOKEN` | From codecov.io (optional, for coverage reports) |
+| Secret                      | Value                                            |
+| --------------------------- | ------------------------------------------------ |
+| `VERCEL_TOKEN`              | From vercel.com → Account Settings → Tokens      |
+| `SUPABASE_URL`              | Your Supabase project URL                        |
+| `SUPABASE_ANON_KEY`         | Supabase anon key                                |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key                        |
+| `CODECOV_TOKEN`             | From codecov.io (optional, for coverage reports) |
 
 ### Step 3: CI/CD pipeline runs automatically
 
 Every push to `main` will:
+
 1. Run ESLint
 2. Run Jest tests on Node 18 & 20
 3. Run `npm audit` security check
@@ -393,7 +408,10 @@ To add Open Graph meta tags for the frontend, edit `public/index.html`:
 
 ```html
 <meta property="og:title" content="Nexus CRM" />
-<meta property="og:description" content="Appointment booking and customer management" />
+<meta
+  property="og:description"
+  content="Appointment booking and customer management"
+/>
 <meta property="og:image" content="https://nexuscrm.io/og-image.png" />
 <meta property="og:url" content="https://nexuscrm.io" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -417,11 +435,12 @@ npm run seed      # Populate database with sample data
 
 The reminder service runs automatically inside the server process:
 
-| Schedule | Job |
-|----------|-----|
+| Schedule             | Job                                                      |
+| -------------------- | -------------------------------------------------------- |
 | Every day at 8:00 AM | Send email reminders for appointments scheduled tomorrow |
 
 On Vercel (serverless), use **Vercel Cron Jobs** instead. Add to `vercel.json`:
+
 ```json
 {
   "crons": [
@@ -432,6 +451,7 @@ On Vercel (serverless), use **Vercel Cron Jobs** instead. Add to `vercel.json`:
   ]
 }
 ```
+
 Then add a `GET /api/cron/reminders` route that calls `sendAppointmentReminders()`.
 
 ---
