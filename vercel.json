@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "nexus-crm",
   "builds": [
     {
       "src": "src/server.js",
@@ -13,38 +12,11 @@
       "dest": "src/server.js"
     },
     {
-      "src": "/health",
-      "dest": "src/server.js"
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "src/server.js"
-    },
-    {
-      "src": "/sitemap.xml",
-      "dest": "src/server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "public/index.html"
+      "dest": "src/server.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
-    },
-    {
-      "source": "/(.*\\.(js|css|png|jpg|svg|ico|woff2))",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
-      ]
-    }
-  ]
+  }
 }
