@@ -28,6 +28,7 @@ const webhookRoutes = require("./routes/webhooks");
 const { sendAppointmentReminders } = require("./services/reminderService");
 
 const app = express();
+app.set("trust proxy", 1); // ← add this line
 
 // ─── Security & Middleware ────────────────
 app.use(
