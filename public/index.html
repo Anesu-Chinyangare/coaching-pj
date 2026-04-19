@@ -2100,6 +2100,16 @@
       }
 
       async function executeDelete() {
+        if (!_deletePayload) return;
+        const { type, id } = _deletePayload;
+        const btn = document.getElementById("confirmDeleteBtn");
+        btn.disabled = true;
+        btn.textContent = "Deleting...";
+        const endpoints = {
+          customer: "/api/customers",
+          lead: "/api/leads",
+          appointment: "/api/appointments",
+        };
         const res = await fetch(`${endpoints[type]}/${id}`, {
           method: "DELETE",
           headers: {
