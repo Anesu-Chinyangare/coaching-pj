@@ -47,7 +47,7 @@ app.use(
         connectSrc: [
           "'self'",
           "https://www.google-analytics.com",
-          "https://cvflmervkyryoonkwron.supabase.co",
+          "https://ynaenzqmykbrgvvtuybj.supabase.co",
           "https://cdn.jsdelivr.net",
         ],
         scriptSrcAttr: ["'unsafe-inline'"],
@@ -130,7 +130,7 @@ cron.schedule("0 8 * * *", async () => {
 // ─── Start Server ─────────────────────────
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {});
-logger.info(`Anesu PJ running on port ${PORT} [${process.env.NODE_ENV}]`);
+logger.info(`Coching PJ running on port ${PORT} [${process.env.NODE_ENV}]`);
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
