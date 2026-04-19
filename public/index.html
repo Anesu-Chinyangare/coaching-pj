@@ -1697,10 +1697,10 @@
           ["scheduled", "confirmed"].includes(x.status),
         ).length;
         document.getElementById("kpiGrid").innerHTML = `
-      <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value" style="color:var(--accent)">${fmt$(rev)}</div><div class="kpi-delta">↑ All time</div></div>
-      <div class="kpi-card"><div class="kpi-label">Customers</div><div class="kpi-value" style="color:var(--accent2)">${c.length}</div><div class="kpi-delta">Total accounts</div></div>
-      <div class="kpi-card"><div class="kpi-label">Active Leads</div><div class="kpi-value" style="color:var(--success)">${active}</div><div class="kpi-delta">In pipeline</div></div>
-      <div class="kpi-card"><div class="kpi-label">Upcoming</div><div class="kpi-value" style="color:var(--warning)">${upcount}</div><div class="kpi-delta">Appointments</div></div>`;
+            <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value" style="color:var(--accent)">${fmt$(rev)}</div><div class="kpi-delta">↑ All time</div></div>
+            <div class="kpi-card"><div class="kpi-label">Customers</div><div class="kpi-value" style="color:var(--accent2)">${c.length}</div><div class="kpi-delta">Total accounts</div></div>
+            <div class="kpi-card"><div class="kpi-label">Active Leads</div><div class="kpi-value" style="color:var(--success)">${active}</div><div class="kpi-delta">In pipeline</div></div>
+            <div class="kpi-card"><div class="kpi-label">Upcoming</div><div class="kpi-value" style="color:var(--warning)">${upcount}</div><div class="kpi-delta">Appointments</div></div>`;
         document.getElementById("totalCustomers").textContent = c.length || "—";
         const mo = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
         const curYear = new Date().getFullYear();
@@ -1888,25 +1888,25 @@
       function openCustomerModal() {
         document.getElementById("modalTitle").textContent = "New Customer";
         document.getElementById("modalBody").innerHTML = `
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="mFirstName" placeholder="John" /></div>
-        <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="mLastName" placeholder="Doe" /></div>
-      </div>
-      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mEmail" type="email" placeholder="john@example.com" /></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="mPhone" placeholder="+1 234 567 890" /></div>
-        <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="mCompany" placeholder="Acme Inc." /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Status</label>
-          <select class="form-select" id="mCustStatus">
-            <option value="active">Active</option><option value="vip">VIP</option>
-            <option value="at_risk">At Risk</option><option value="inactive">Inactive</option>
-          </select>
-        </div>
-        <div class="form-group"><label class="form-label">Total Spent ($)</label><input class="form-input" id="mTotalSpent" type="number" value="0" /></div>
-      </div>
-      <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="mCustNotes" placeholder="Optional notes..." /></div>`;
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="mFirstName" placeholder="John" /></div>
+              <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="mLastName" placeholder="Doe" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mEmail" type="email" placeholder="john@example.com" /></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="mPhone" placeholder="+1 234 567 890" /></div>
+              <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="mCompany" placeholder="Acme Inc." /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Status</label>
+                <select class="form-select" id="mCustStatus">
+                  <option value="active">Active</option><option value="vip">VIP</option>
+                  <option value="at_risk">At Risk</option><option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div class="form-group"><label class="form-label">Total Spent ($)</label><input class="form-input" id="mTotalSpent" type="number" value="0" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="mCustNotes" placeholder="Optional notes..." /></div>`;
         document.getElementById("submitBtn").onclick = submitCustomer;
         document.getElementById("modalOverlay").classList.add("open");
       }
@@ -1947,35 +1947,35 @@
       function openLeadModal() {
         document.getElementById("modalTitle").textContent = "New Lead";
         document.getElementById("modalBody").innerHTML = `
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="mFirstName" placeholder="Jane" /></div>
-        <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="mLastName" placeholder="Smith" /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mEmail" type="email" placeholder="jane@example.com" /></div>
-        <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="mCompany" placeholder="Acme Inc." /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Source</label>
-          <select class="form-select" id="mSource">
-            <option value="website">Website</option><option value="referral">Referral</option>
-            <option value="linkedin">LinkedIn</option><option value="cold_outreach">Cold Outreach</option>
-            <option value="event">Event</option><option value="other">Other</option>
-          </select>
-        </div>
-        <div class="form-group"><label class="form-label">Stage</label>
-          <select class="form-select" id="mStage">
-            <option value="new">New</option><option value="discovery">Discovery</option>
-            <option value="qualified">Qualified</option><option value="proposal">Proposal</option>
-            <option value="closed_won">Closed Won</option><option value="closed_lost">Closed Lost</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Score (0-100)</label><input class="form-input" id="mScore" type="number" value="50" min="0" max="100" /></div>
-        <div class="form-group"><label class="form-label">Est. Value ($)</label><input class="form-input" id="mEstValue" type="number" placeholder="5000" /></div>
-      </div>
-      <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="mLeadNotes" placeholder="Optional notes..." /></div>`;
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="mFirstName" placeholder="Jane" /></div>
+              <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="mLastName" placeholder="Smith" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mEmail" type="email" placeholder="jane@example.com" /></div>
+              <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="mCompany" placeholder="Acme Inc." /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Source</label>
+                <select class="form-select" id="mSource">
+                  <option value="website">Website</option><option value="referral">Referral</option>
+                  <option value="linkedin">LinkedIn</option><option value="cold_outreach">Cold Outreach</option>
+                  <option value="event">Event</option><option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group"><label class="form-label">Stage</label>
+                <select class="form-select" id="mStage">
+                  <option value="new">New</option><option value="discovery">Discovery</option>
+                  <option value="qualified">Qualified</option><option value="proposal">Proposal</option>
+                  <option value="closed_won">Closed Won</option><option value="closed_lost">Closed Lost</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Score (0-100)</label><input class="form-input" id="mScore" type="number" value="50" min="0" max="100" /></div>
+              <div class="form-group"><label class="form-label">Est. Value ($)</label><input class="form-input" id="mEstValue" type="number" placeholder="5000" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="mLeadNotes" placeholder="Optional notes..." /></div>`;
         document.getElementById("submitBtn").onclick = submitLead;
         document.getElementById("modalOverlay").classList.add("open");
       }
@@ -2017,28 +2017,28 @@
       function openAppointmentModal() {
         document.getElementById("modalTitle").textContent = "New Appointment";
         document.getElementById("modalBody").innerHTML = `
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="mTitle" placeholder="e.g. Strategy Call" /></div>
-        <div class="form-group"><label class="form-label">Type</label>
-          <select class="form-select" id="mType">
-            <option value="consultation">Consultation</option><option value="follow_up">Follow-up</option>
-            <option value="demo">Demo</option><option value="strategy">Strategy</option>
-            <option value="proposal">Proposal</option><option value="other">Other</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group"><label class="form-label">Customer ID (UUID)</label><input class="form-input" id="mCustomerId" placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000" /></div>
-      <div class="form-group"><label class="form-label">Scheduled At</label><input class="form-input" id="mDate" type="datetime-local" /></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Duration (min)</label><input class="form-input" id="mDuration" type="number" value="60" min="15" max="480" /></div>
-        <div class="form-group"><label class="form-label">Status</label>
-          <select class="form-select" id="mStatus">
-            <option value="scheduled">Scheduled</option><option value="confirmed">Confirmed</option>
-            <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="mNotes" placeholder="Optional notes..." /></div>`;
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="mTitle" placeholder="e.g. Strategy Call" /></div>
+              <div class="form-group"><label class="form-label">Type</label>
+                <select class="form-select" id="mType">
+                  <option value="consultation">Consultation</option><option value="follow_up">Follow-up</option>
+                  <option value="demo">Demo</option><option value="strategy">Strategy</option>
+                  <option value="proposal">Proposal</option><option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Customer ID (UUID)</label><input class="form-input" id="mCustomerId" placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000" /></div>
+            <div class="form-group"><label class="form-label">Scheduled At</label><input class="form-input" id="mDate" type="datetime-local" /></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Duration (min)</label><input class="form-input" id="mDuration" type="number" value="60" min="15" max="480" /></div>
+              <div class="form-group"><label class="form-label">Status</label>
+                <select class="form-select" id="mStatus">
+                  <option value="scheduled">Scheduled</option><option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="mNotes" placeholder="Optional notes..." /></div>`;
         document.getElementById("submitBtn").onclick = submitAppointment;
         document.getElementById("modalOverlay").classList.add("open");
       }
@@ -2100,21 +2100,15 @@
       }
 
       async function executeDelete() {
-        if (!_deletePayload) return;
-        const { type, id } = _deletePayload;
-        const btn = document.getElementById("confirmDeleteBtn");
-        btn.disabled = true;
-        btn.textContent = "Deleting...";
-        const endpoints = {
-          customer: "/api/customers",
-          lead: "/api/leads",
-          appointment: "/api/appointments",
-        };
-        const res = await apiFetch(`${endpoints[type]}/${id}`, {
+        const res = await fetch(`${endpoints[type]}/${id}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
         closeConfirm();
-        if (res !== null) {
+        if (res.ok) {
           showToast(type.charAt(0).toUpperCase() + type.slice(1) + " deleted");
           if (type === "customer") loadCustomers();
           else if (type === "lead") loadLeads();
