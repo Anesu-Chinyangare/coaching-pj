@@ -1815,7 +1815,7 @@
           ? rows
               .map(
                 (a) =>
-                  `<tr><td><strong>${a.title}</strong></td><td style="color:var(--muted)">${a.customer_id || "—"}</td><td style="color:var(--muted)">${a.type || "—"}</td><td>${badge(a.status)}</td><td style="color:var(--muted)">${fmtDate(a.scheduled_at)}</td><td style="color:var(--muted)">${a.duration_min || "—"} min</td><td style="text-align:right"><button class="btn-delete" onclick="confirmDelete('appointment','${a.id}','${a.title}')" title="Delete appointment">✕</button></td></tr>`,
+                  `<tr><td><strong>${a.title}</strong></td><td style="color:var(--muted)">${customersData.find((c) => c.id === a.customer_id)?.first_name + " " + customersData.find((c) => c.id === a.customer_id)?.last_name || a.customer_id || "—"}</td><td style="color:var(--muted)">${a.type || "—"}</td><td>${badge(a.status)}</td><td style="color:var(--muted)">${fmtDate(a.scheduled_at)}</td><td style="color:var(--muted)">${a.duration_min || "—"} min</td><td style="text-align:right"><button class="btn-delete" onclick="confirmDelete('appointment','${a.id}','${a.title}')" title="Delete appointment">✕</button></td></tr>`,
               )
               .join("")
           : errRow(7, "No appointments found");
