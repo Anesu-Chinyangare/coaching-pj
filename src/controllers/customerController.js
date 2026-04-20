@@ -29,20 +29,11 @@ const getCustomer = async (req, res, next) => {
 
 const createCustomer = async (req, res, next) => {
   try {
-    console.log('Creating customer with body:', JSON.stringify(req.body));
-    console.log('User:', JSON.stringify(req.user));
     const { data, error } = await supabase.from('customers').insert({ ...req.body, owner_id: req.user?.id }).select().single();
-    if (error) {
-      console.error('Supabase insert error:', JSON.stringify(error));
-      throw error;
-    }
-    console.log('Customer created:', JSON.stringify(data));
+    if (error) throw error;
     await supabase.from('activities').insert({ entity_type: 'customer', entity_id: data.id, user_id: req.user?.id, action: 'created' });
     res.status(201).json({ data });
-  } catch (err) {
-    console.error('createCustomer error:', err.message);
-    next(err);
-  }
+  } catch (err) { next(err); }
 };
 
 const updateCustomer = async (req, res, next) => {
