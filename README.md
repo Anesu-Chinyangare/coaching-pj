@@ -1,463 +1,480 @@
-# Coaching PJ
 
-Appointment booking, lead tracking & customer management platform built with Node.js, Express, and Supabase.
+1. Project Overview
 
----
+Coaching PJ is a full-stack Customer Relationship Management (CRM) platform built specifically for coaching businesses. It provides a centralised system for managing client relationships, tracking sales leads through a visual pipeline, scheduling appointments, and analysing business performance through real-time analytics.
 
-## Tech Stack
+The platform is built with a Node.js/Express backend, a PostgreSQL database hosted on Supabase, and a lightweight single-page frontend delivered as a static HTML file. It is deployed on Vercel with automatic CI/CD through GitHub Actions.
 
-| Layer      | Technology                                |
-| ---------- | ----------------------------------------- |
-| Runtime    | Node.js 18+                               |
-| Framework  | Express.js                                |
-| Database   | Supabase (PostgreSQL)                     |
-| Auth       | Supabase Auth (JWT)                       |
-| Email      | Nodemailer (SMTP)                         |
-| Analytics  | Google Analytics 4 (Measurement Protocol) |
-| Deployment | Vercel                                    |
-| CI/CD      | GitHub Actions                            |
-| Testing    | Jest + Supertest                          |
+1.1 Key Features
+•	Secure authentication using Supabase JWT tokens
+•	Customer management with status tracking and revenue history
+•	Lead pipeline with 6 stages: New, Discovery, Qualified, Proposal, Won, Lost
+•	Appointment scheduling with type classification and duration tracking
+•	Real-time analytics dashboard with KPI cards and pipeline charts
+•	Revenue tracking grouped by month
+•	Google Analytics 4 integration with custom event tracking
+•	Delete functionality with confirmation dialogs for all record types
+•	Responsive design with mobile sidebar collapse
 
----
+1.2 Technology Stack
 
-## Project Structure
+|Layer	   |Technology	    |Purpose
+|----------|----------------|------------------------|
+|Runtime	|Node.js 25.9.0	   |JavaScript server environment     |
+|
+|Framework	|Express.js	|HTTP server and API routing        |
+|
+|Database       |Supabase (PostgreSQL)	|Relational data storage      |
+|
+|Authentication	 |Supabase Auth (JWT)	|Secure user login and token verification       |
+|
+|Frontend	|HTML/CSS/JS	|Single-page application in public/index.html   |
+|
+|Email	  |Nodemailer (SMTP)	|Appointment confirmation and reminder emails   |
+|
+|Analytics	|Google Analytics 4	|User behaviour and event tracking   |
+|
+|Deployment	|Vercel	|Serverless hosting with auto-deploy               |
+|
+|CI/CD	|GitHub Actions	|Automated testing and deployment pipeline         |
+|
+|Testing	|Jest + Supertest	|Unit and integration testing      |
+|
+|Security	|Helmet.js	|HTTP security headers and CSP             |
+|
+|Logging	|Winston	|Structured server-side logging            |
 
-```
+ 
+2. System Architecture
+
+The application follows a traditional MVC (Model-View-Controller) architecture adapted for a RESTful API backend with a decoupled frontend.
+
+2.1 Request Flow
+
+Every user interaction follows this path:
+
+1.	User opens coaching-pj.vercel.app in their browser
+2.	Browser loads public/index.html — the entire frontend UI
+3.	User enters credentials; Supabase Auth verifies and returns a JWT token
+4.	Frontend stores the token in memory and includes it in every API request
+5.	Express server receives the request and runs the authenticate() middleware
+6.	Middleware verifies the JWT with Supabase Auth
+7.	If valid, the request passes to the appropriate controller
+8.	Controller queries the Supabase PostgreSQL database
+9.	Database returns data; controller formats and sends the JSON response
+10.	Frontend renders the data as HTML in the browser
+
+2.2 Frontend vs Backend
+
+|Component	|Location	|Runs In	|Visible to Users
+|---------------|---------------|---------------|--------------------------|
+|index.html	|public/index.html	|User's browser 	|Yes — the entire UI     |
+|
+|server.js	|src/server.js	|Vercel serverless	|No — server only          |
+|
+|Controllers	|src/controllers/	|Vercel serverless	|No — server only      |
+|
+|Routes 	|src/routes/	|Vercel serverless	|No — server only          |
+|
+|Middleware	|src/middleware/	|Vercel serverless	|No — server only         |
+|
+|Supabase config	|src/config/supabase.js	|Vercel serverless	|No — server only  |
+
+2.3 Project File Structure
+
 coaching-pj/
-├── .github/
-│   └── workflows/
-│       └── ci-cd.yml          # GitHub Actions CI/CD pipeline
-├── .vscode/
-│   ├── extensions.json        # Recommended VS Code extensions
-│   ├── launch.json            # Debug configurations
-│   └── settings.json          # Editor settings
-├── public/                    # Static frontend files
-│   ├── index.html
-│   ├── css/
-│   └── js/
-├── scripts/
-│   ├── schema.sql             # Supabase DB schema
-│   └── seed.js                # Sample data seeder
+├── public/
+│   └── index.html          ← Entire frontend (UI, CSS, JavaScript)
 ├── src/
+│   ├── server.js           ← Express app entry point
 │   ├── config/
-│   │   └── supabase.js        # Supabase client
-│   ├── controllers/
+│   │   └── supabase.js     ← Database client configuration
+│   ├── controllers/        ← Business logic per resource
 │   │   ├── analyticsController.js
 │   │   ├── appointmentController.js
 │   │   ├── customerController.js
 │   │   ├── leadController.js
 │   │   └── seoController.js
-│   ├── middleware/
-│   │   ├── auth.js            # JWT authentication
-│   │   ├── errorHandler.js
-│   │   ├── rateLimiter.js
-│   │   └── validate.js
-│   ├── routes/
-│   │   ├── analytics.js
-│   │   ├── appointments.js
-│   │   ├── auth.js
-│   │   ├── customers.js
-│   │   ├── leads.js
-│   │   └── webhooks.js
-│   ├── services/
-│   │   ├── analyticsService.js  # GA4 Measurement Protocol
-│   │   ├── emailService.js      # Nodemailer templates
-│   │   └── reminderService.js   # Cron reminder job
-│   ├── utils/
-│   │   └── logger.js            # Winston logger
-│   └── server.js                # Express app entry point
-├── tests/
-│   └── appointments.test.js
-├── .env.example
-├── .eslintrc.json
-├── .gitignore
-├── api.http                    # REST Client test file
-├── jest.config.js
-├── package.json
-└── vercel.json
-```
-
----
-
-## Part 1 — Setting Up Node.js in VS Code
-
-### Step 1: Install Node.js
-
-1. Go to **https://nodejs.org**
-2. Download the **LTS version** (18.x or 20.x recommended)
-3. Run the installer — accept all defaults
-4. Verify installation — open a terminal and run:
-   ```bash
-   node --version    # Should show v18.x.x or v20.x.x
-   npm --version     # Should show 9.x.x or 10.x.x
-   ```
-
-### Step 2: Install VS Code
-
-1. Go to **https://code.visualstudio.com**
-2. Download and install for your OS (Windows / macOS / Linux)
-3. Open VS Code
-
-### Step 3: Install the Node.js Extension Pack in VS Code
-
-Open VS Code, then press `Ctrl+Shift+X` (Windows/Linux) or `Cmd+Shift+X` (macOS) to open Extensions. Search for and install:
-
-| Extension                                         | Purpose                           |
-| ------------------------------------------------- | --------------------------------- |
-| **ESLint** (dbaeumer.vscode-eslint)               | Real-time linting                 |
-| **Prettier** (esbenp.prettier-vscode)             | Auto-formatting                   |
-| **DotENV** (mikestead.dotenv)                     | .env syntax highlighting          |
-| **REST Client** (humao.rest-client)               | Test API endpoints inside VS Code |
-| **GitLens** (eamodio.gitlens)                     | Enhanced Git integration          |
-| **Thunder Client** (rangav.vscode-thunder-client) | Postman-like API testing          |
-
-Or install all at once — open the Command Palette (`Ctrl+Shift+P`) and run:
-
-```
-Extensions: Show Recommended Extensions
-```
-
-(The `.vscode/extensions.json` in this project auto-suggests them all.)
-
-### Step 4: Configure VS Code for Node.js
-
-Press `Ctrl+Shift+P` → **"Open User Settings (JSON)"** and add:
-
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.tabSize": 2,
-  "javascript.suggest.autoImports": true,
-  "files.autoSave": "onFocusChange"
-}
-```
-
-### Step 5: Open the Integrated Terminal
-
-Press `` Ctrl+` `` (backtick) to open the integrated terminal. All `npm` and `node` commands run here — no need to switch apps.
-
-### Step 6: Run and Debug Node.js in VS Code
-
-This project includes pre-configured debug launchers in `.vscode/launch.json`. To use them:
-
-1. Press `F5` or click the **Run & Debug** icon in the left sidebar
-2. Select a configuration from the dropdown:
-   - **▶ Run Server** — starts the Express server with nodemon (auto-restart on save)
-   - **🧪 Run Tests** — runs Jest with coverage
-   - **🌱 Run Seed Script** — populates the database with sample data
-3. Set breakpoints by clicking the gutter (left of line numbers) — execution will pause there
+│   ├── middleware/         ← Cross-cutting concerns
+│   │   ├── auth.js         ← JWT verification
+│   │   ├── errorHandler.js ← Centralised error responses
+│   │   ├── rateLimiter.js  ← Request rate limiting
+│   │   └── validate.js     ← Input validation
+│   ├── routes/             ← API endpoint definitions
+│   ├── services/           ← Email, reminders, analytics
+│   └── utils/logger.js     ← Winston structured logger
+├── scripts/schema.sql      ← Supabase database schema
+├── vercel.json             ← Vercel deployment config
+└── package.json
+
+ 
+3. Database Design
+
+The database is hosted on Supabase (PostgreSQL). All tables use UUID primary keys generated by Supabase automatically. Row Level Security (RLS) was intentionally disabled to allow the service role key to manage all records server-side.
+
+3.1 Tables
+
+|Table  	|Purpose	|Key Fields               |
+|---------------|---------------|---------------------------------|
+|users 	|Authenticated system users	|id, email, name, role       |
+|
+|customers	|CRM customer records	|id, first_name, last_name, email, company, status, total_spent, owner_id   |
+|
+|leads	|Sales pipeline leads	|id, first_name, last_name, stage, score, estimated_value, source, owner_id       |
+|
+|appointments	|Scheduled meetings	|id, title, type, customer_id, scheduled_at, duration_min, status, owner_id     |
+|
+|activities	|Audit log of actions	|id, entity_type, entity_id, user_id, action, metadata             |
+|
+|analytics_events	|Custom GA event log	|id, event_name, event_data, session_id, user_agent        |
+
+3.2 |Customer |Status |Values
+• active — currently engaged client
+• vip — high-value client
+• at_risk — client showing signs of churn
+• inactive — no recent engagement
+• churned — lost client
+
+3.3 Lead Pipeline Stages
+Leads move through 6 stages representing the sales journey:
+
+|Stage	| Description             |
+|-------|-------------------------|
+|new	 |Freshly added lead, no contact made yet     |
+|
+|discovery	|Initial conversation underway         |
+|
+|qualified	|Lead confirmed as a genuine opportunity         |
+|
+|proposal	|Formal proposal or quote sent     |
+|
+|closed_won	|Deal successfully closed      |
+|
+|closed_lost	|Lead did not convert         |
+
+ 
+4. API Reference
+
+All API endpoints follow RESTful conventions. Every request (except authentication) requires a valid Supabase JWT token in the Authorization header:
+
+Authorization: Bearer YOUR_JWT_TOKEN
+
+4.1 Authentication
+
+|Method	|Path	  |Description	|Auth Required
+|-------|---------|-------------|-----------------------|
+|POST	|/api/auth/login	|Login with email and password	|No   |
+|POST	|/api/auth/logout	|Invalidate current session	|Yes  |
+
+4.2 Customers
+
+|Method	 |Path	              |Description               |
+|--------|--------------------|--------------------------|
+|GET	|/api/customers	       |List all customers (supports ?status=, ?search=, ?page=, ?limit=)          |
+|
+|GET	|/api/customers/:id	|Get single customer with appointments, leads and activity history        |
+|
+|POST	|/api/customers	        |Create a new customer record           |
+|
+|PATCH	|/api/customers/:id	|Update customer fields         |
+|
+|DELETE	|/api/customers/:id	|Permanently delete a customer      |
+
+4.3 Leads
+
+|Method	|Path	|Description                   |
+|-------|-------|-----------------------------|
+|GET	 |/api/leads	|List all leads (supports ?stage=, ?source=, ?min_score=) |
+|
+|GET	 |\api/leads/:id	|Get single lead record      |
+|
+|POST	|/api/leads	|Create a new lead         |
+|
+|PATCH	 |/api/leads/:id	|Update lead / change pipeline stage    |
+|
+|POST	  |/api/leads/:id/convert	|Convert a won lead into a customer record    |
+|
+|DELETE	    |/api/leads/:id              |Delete a lead           |
+
+4.4 Appointments
+
+|Method	   |Path	                 |Description          |
+|----------|-----------------------------|----------------------|
+|GET	|/api/appointments	|List appointments (supports ?status=, ?date_from=, ?date_to=)       |
+|
+|GET	|/api/appointments/:id	|Get single appointment         |
+|
+|POST	|/api/appointments	|Create appointment        |
+|
+|PATCH	|/api/appointments/:id	|Update appointment details or status      |
+|
+|DELETE	|/api/appointments/:id	|Delete appointment    |
+|
+|POST	|/api/appointments/:id/remind	|Send reminder email to customer  |
+
+4.5 Analytics
+
+|Method	|Path	|Description           |
+|-------|-------|------------------------|
+|GET	|/api/analytics/dashboard	|KPI stats: total_customers, active_leads, pipeline_value, conversion_rate
+|
+|GET	|/api/analytics/pipeline	|Pipeline value broken down by stage
+|
+|POST	|/api/analytics/track           |Log a custom frontend analytics event (no auth required)
+
+ 
+5. Frontend Application
+
+The entire frontend lives in a single file: public/index.html. It is a Single-Page Application (SPA) that dynamically renders content without any page reloads. All UI transitions, data fetching, and state management are handled in vanilla JavaScript.
+
+5.1 Dashboard Sections
+
+|Section	     |What It Shows	|Data Source                    |
+|--------------------|------------------|--------------------------------------------|
+|KPI Cards (top row)	|Total Revenue, Customer Count, Active Leads, Upcoming Appointments	|Customers + Leads + Appointments tables    |
+|
+|Revenue / Month Chart	|Bar chart of monthly revenue based on customer creation date	|customers.total_spent grouped by created_at month    |
+|
+|Customer Status Donut	|Visual breakdown of customers by status	|Customers table       |
+|
+|Upcoming Appointments	|Next 5 scheduled/confirmed appointments	|Appointments with status = scheduled or confirmed        |
+|
+|Top Leads	|Top 5 leads by score with visual score bar	|Leads sorted by score descending         |
+
+5.2 Pages
+
+|Page	      |Features    |
+|-------------|-------------|
+|Dashboard	|KPI cards, revenue chart, customer donut, upcoming appointments, top leads   |
+|
+|Customers	|Sortable table with name, company, email, status badge, total spent, delete button  |
+|
+|Leads	|Kanban pipeline board by stage + full leads table with score bars    |
+|
+|Appointments	|Table with title, customer name, type, status, date/time, duration, delete  |
+|
+|Analytics	|4 KPI cards + pipeline value bar chart by stage   |
+
+5.3 Key JavaScript Functions
+
+|Function	|Purpose               |
+|---------------|----------------------|
+|doLogin()	|Authenticates user via Supabase, stores JWT token in memory     |
+|
+|apiFetch(path, options)	|Wrapper for all API calls — automatically attaches the auth token    |
+|
+|navigate(page, el)	|Switches between pages, fires GA page_view event        |
+|
+|loadDashboard()	|Fetches all three data sets in parallel, renders all dashboard widgets |
+|
+|loadCustomers()	|Fetches and renders the customers table  |
+|
+|loadLeads()	|Fetches leads, renders both the pipeline board and the table |
+|
+|loadAppointments()	|Fetches and renders the appointments table    |
+|
+|loadAnalytics()	|Calls both analytics endpoints, renders KPI cards and pipeline chart  |
+|
+|confirmDelete(type, id, label)	  |Opens confirmation dialog before any delete operation  |
+|
+|executeDelete()	|Sends DELETE request, reloads the relevant table on success  |
+|
+|handleSearch(query)	C|lient-side search filter on already-loaded customer or lead data  |
+
+ 
+6. Security Implementation
+
+6.1 Authentication
+Authentication is handled entirely by Supabase Auth. When a user logs in, Supabase validates their credentials and returns a signed JWT token. Every subsequent API request from the browser includes this token in the Authorization header. The server's authenticate() middleware verifies the token with Supabase on every protected route before allowing access.
+
+6.2 Security Headers (Helmet.js)
+Helmet.js sets the following HTTP security headers on every response:
+
+|Header	|Purpose      |
+|-------|-------------|
+|Content-Security-Policy (CSP)	|Restricts which scripts, styles, fonts, and connections are allowed  |
+|
+|X-Frame-Options	|Prevents the app from being embedded in iframes (clickjacking protection)   |
+|
+|X-Content-Type-Options	|Prevents MIME type sniffing  |
+|
+|Referrer-Policy	|Controls what referrer information is sent with requests  |
+|
+|Strict-Transport-Security	|Enforces HTTPS connections  |
+
+6.3 Rate Limiting
+The express-rate-limit middleware limits all /api/ routes to 100 requests per 15-minute window per IP address. The /health endpoint is excluded. On Vercel, the trust proxy setting is enabled to correctly identify client IP addresses behind the proxy layer.
+
+6.4 Input Validation
+All POST and PATCH routes run through express-validator middleware before reaching the controller. Invalid requests return a 422 Unprocessable Content response with field-level error details. The appointment route validates that customer_id is a valid UUID, scheduled_at is ISO 8601 format, and type is one of the allowed values.
+
+6.5 Environment Variables
+All sensitive credentials are stored as environment variables — never in code. The following variables are required:
+
+|Variable	|Where Set	|Purpose                       |
+|---------------|---------------|-------------------------------|
+|SUPABASE_URL	|Vercel + .env	|Supabase project endpoint URL            |
+
+|SUPABASE_ANON_KEY	|Vercel + .env	|Public key for browser-side auth     |
+|
+|SUPABASE_SERVICE_ROLE_KEY	|Vercel only	|Server-side key that bypasses RLS         |
+|
+|CORS_ORIGIN	Vercel + .env	|Allowed frontend origin for CORS            |
+|
+|NODE_ENV	Vercel + .env	|Environment (production/development)         |
+
+ 
+7. Analytics & Tracking
+
+7.1 Google Analytics 4 Setup
+Google Analytics 4 is integrated via the gtag.js library loaded in the HTML head. The Measurement ID is G-VQ0X3XKHBQ. The GA stream is configured to receive traffic from https://coaching-pj.vercel.app.
+
+7.2 What Is Tracked
+
+|Event	|When It Fires	|Type
+|-------|---------------|------------------------------------------|
+|page_view (auto)	|On initial app load	|Automatic         |
+|
+|page_view (SPA)	|Every sidebar navigation click	 |Custom — fires in navigate()   |
+|
+|login	|On successful sign in     	|Custom         |
+|
+|customer_created	|When a new customer is saved	 | Custom     |
+|
+|lead_created	|When a new lead is saved	|Custom               |
+|
+|appointment_created	|When an appointment is booked	|Custom        |
+|
+|record_deleted	|When any record is deleted	|Custom — includes record_type parameter          |
+
+7.3 Where to View Data in GA
+•	Reports > Realtime — active users right now
+•	Reports > Engagement > Pages and Screens — most visited pages
+•	Reports > Engagement > Events — custom event counts
+•	Reports > Acquisition — traffic sources
+•	Reports > Retention — returning vs new users
+
+7.4 Current GA Results
+Since deployment in April 2026 the platform has recorded:
+•	11 active users
+•	9 new users
+•	158 total events
+•	2 minutes 49 seconds average engagement time per session
+•	Most visited page: Customers (16 views)
+
+ 
+8. Deployment & DevOps
+
+8.1 Vercel Deployment
+The application is deployed on Vercel at https://coaching-pj.vercel.app. The vercel.json configuration routes all traffic through src/server.js as a serverless function. Every push to the main branch on GitHub triggers an automatic production deployment.
+
+8.2 CI/CD Pipeline (GitHub Actions)
+The .github/workflows/ci-cd.yml pipeline runs on every push and pull request:
+11.	ESLint runs to check code quality
+12.	Jest tests run on Node.js 18 and 20
+13.	npm audit checks for security vulnerabilities
+14.	If all checks pass, Vercel deploys to production automatically
+
+8.3 Environment Configuration
+Five environment variables are configured in Vercel under Project Settings > Environment Variables, all set to All Environments (Production, Preview, Development):
+•	SUPABASE_URL
+•	SUPABASE_ANON_KEY
+•	SUPABASE_SERVICE_ROLE_KEY
+•	CORS_ORIGIN
+•	NODE_ENV
+
+8.4 Local Development Setup
+15.	Clone the repository: git clone https://github.com/Anesu-Chinyangare/coaching-pj.git
+16.	Install dependencies: npm install
+17.	Copy environment file: cp .env.example .env
+18.	Fill in your Supabase credentials in .env
+19.	Start the development server: npm run dev
+20.	Open http://localhost:3000
+
+ 
+9. Testing
+
+The project includes a Jest + Supertest test suite. Tests can be run locally or are triggered automatically by the GitHub Actions CI/CD pipeline.
+
+npm test          # Run all tests with coverage
+npm run lint      # Run ESLint code quality checks
+
+9.1 Manual API Testing
+The api.http file in the project root can be used with the VS Code REST Client extension to manually test all API endpoints. Replace the placeholder JWT token with a real token from the Supabase dashboard and run any request with a single click.
+
+9.2 Available npm Scripts
+
+|Command	|Description                  |
+|---------------|-----------------------------
+|npm run dev	 |Start server with nodemon (auto-restart on file save)   | 
+|
+|npm start	|Start production server   |
+|
+|npm test	|Run Jest tests with coverage report   |
+|
+|npm run lint	|Run ESLint on all source files   |
+|
+|npm run seed	|Populate database with sample data   |
+
+Challenges Faced
+Challenge 1
+Invalid Database Joins Crashing All API Routes
+All three controllers (customers, leads, appointments) used Supabase relational joins like .select('*, owner:users(id, name)') which required foreign key relationships that did not exist in the database schema. This caused every GET and POST request to return a 500 error.
+Solution: Removed all relational joins from the controllers and replaced them with simple .select('*') queries, fetching only the data directly available in each table.
+
+Challenge 2
+Supabase Foreign Key Constraint Blocking Record Creation
+Creating customers returned a 500 error with the message "insert or update on table customers violates foreign key constraint customers_owner_id_fkey". The owner_id field required a matching record in the users table but that table was empty even though the Supabase Auth user existed.
+Solution: Inserted the authenticated user's UUID manually into the users table via the Supabase SQL Editor, linking the Auth user to the application's users table.
+
+Challenge 3
+Invalid Database Joins Crashing All API Routes
+All three controllers (customers, leads, appointments) used Supabase relational joins like .select('*, owner:users(id, name)') which required foreign key relationships that did not exist in the database schema. This caused every GET and POST request to return a 500 error.
+Solution: Removed all relational joins from the controllers and replaced them with simple .select('*') queries, fetching only the data directly available in each table.
+
+Challenge 4
+Content Security Policy Blocking Google Analytics
+Google Analytics was integrated but showed zero data in the Realtime dashboard even though the tracking tag was correctly installed. The browser console showed "Refused to connect because it violates the document's Content Security Policy."
+Solution: Updated the connectSrc directive in the Helmet.js CSP configuration in server.js to explicitly allow https://analytics.google.com, https://www.googletagmanager.com, and https://region1.google-analytics.com.
+
+
+ 
+10. Project Summary
+
+Coaching PJ is a production-ready CRM platform that demonstrates a complete full-stack web application architecture. It integrates authentication, a RESTful API, a relational database, serverless deployment, CI/CD automation, and third-party analytics into a single cohesive system.
+
+10.1 What Was Built
+
+Feature	Status	Notes
+
+|User authentication	|Complete	|Supabase JWT with middleware verification |
+|-----------------------|---------------|----------------------------------------- |
+|Customer CRUD	|Complete	|Create, read, update, delete with validation |
+|
+|Lead pipeline	|Complete	|6-stage Kanban board with value tracking |
+|
+|Appointment booking	|Complete	|With customer dropdown and ISO date handling |
+|
+|Analytics dashboard	|Complete	|Real-time KPIs and pipeline chart |
+|
+|Revenue chart	|Complete	|Monthly grouping from real database data |
+|
+|Delete with confirmation	|Complete	|Dialog-based with toast notifications |
+|
+|Google Analytics	|Complete	|Page views + 5 custom eventsVercel deployment	|Auto-deploy on push to main |
+|
+|GitHub CI/CD	|Complete	|Lint, test, deploy pipeline | 
+|
+|Security headers	|Complete	|Helmet.js with full CSP configuration |
+|
+|Rate limiting	|Complete	|100 req/15min per IP |
+
+10.2 Live Application
+The application is live and accessible at:
+
+https://coaching-pj.vercel.app
+
+GitHub Repository: https://github.com/Anesu-Chinyangare/coaching-pj
 
----
 
-## Part 2 — Project Setup
-
-### Step 1: Clone the repository
-
-```bash
-git clone https://github.com/your-username/nexus-crm.git
-cd nexus-crm
-```
-
-### Step 2: Install dependencies
-
-```bash
-npm install
-```
-
-### Step 3: Configure environment variables
-
-```bash
-cp .env.example .env
-```
-
-Open `.env` in VS Code and fill in your values (see section below).
-
-### Step 4: Set up Supabase
-
-1. Go to **https://supabase.com** → New Project
-2. Give it a name (e.g. `nexus-crm`) and set a database password
-3. Once created, go to **Project Settings → API** and copy:
-   - `Project URL` → `SUPABASE_URL`
-   - `anon public` key → `SUPABASE_ANON_KEY`
-   - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY`
-4. Run the schema in Supabase SQL Editor:
-   - Go to **SQL Editor** in the Supabase dashboard
-   - Click **New Query**
-   - Copy and paste the contents of `scripts/schema.sql`
-   - Click **Run**
-
-### Step 5: Seed the database (optional)
-
-```bash
-npm run seed
-```
-
-### Step 6: Start the development server
-
-```bash
-npm run dev
-```
-
-The server starts at **http://localhost:3000**
-
----
-
-## Part 3 — Environment Variables
-
-Fill these into your `.env` file:
-
-```env
-# Server
-NODE_ENV=development
-PORT=3000
-APP_URL=http://localhost:3000
-
-# Supabase (from Project Settings → API)
-SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
-SUPABASE_ANON_KEY=eyJhbGc...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
-
-# Email — use Gmail App Password or any SMTP provider
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=you@gmail.com
-SMTP_PASS=your-gmail-app-password
-
-# Google Analytics 4
-GA_MEASUREMENT_ID=G-XXXXXXXXXX
-GA_API_SECRET=your-ga-api-secret
-
-# JWT
-JWT_SECRET=change-this-to-a-long-random-string
-```
-
-### Getting a Gmail App Password
-
-1. Go to Google Account → Security
-2. Enable 2-Step Verification
-3. Go to **App Passwords** → Generate password for "Mail"
-4. Use that 16-character password as `SMTP_PASS`
-
-### Getting Google Analytics credentials
-
-. Go to **https://analytics.google.com** → Admin 2. Create a Property → Web stream 3. Copy the **Measurement ID** (G-XXXXXXXXXX) 4. Go to **Admin → Data Streams → your stream → Measurement Protocol API secrets** 5. Create a secret and copy its value
-1
-
----
-
-## Part 4 — API Reference
-
-### Authentication
-
-All API routes (except `/api/analytics/track` and `/api/auth/*`) require:
-
-```
-Authorization: Bearer YOUR_SUPABASE_JWT_TOKEN
-```
-
-### Endpoints
-
-#### Appointments
-
-| Method | Path                           | Description                                                    |
-| ------ | ------------------------------ | -------------------------------------------------------------- |
-| GET    | `/api/appointments`            | List appointments (filter by `status`, `date_from`, `date_to`) |
-| GET    | `/api/appointments/:id`        | Get single appointment with customer                           |
-| POST   | `/api/appointments`            | Create appointment + send confirmation email                   |
-| PATCH  | `/api/appointments/:id`        | Update appointment                                             |
-| DELETE | `/api/appointments/:id`        | Delete appointment                                             |
-| POST   | `/api/appointments/:id/remind` | Send reminder email                                            |
-
-#### Leads
-
-| Method | Path                     | Description                                           |
-| ------ | ------------------------ | ----------------------------------------------------- |
-| GET    | `/api/leads`             | List leads (filter by `stage`, `source`, `min_score`) |
-| POST   | `/api/leads`             | Create lead                                           |
-| PATCH  | `/api/leads/:id`         | Update lead / change stage                            |
-| POST   | `/api/leads/:id/convert` | Convert lead to customer                              |
-| DELETE | `/api/leads/:id`         | Delete lead                                           |
-
-#### Customers
-
-| Method | Path                 | Description                                    |
-| ------ | -------------------- | ---------------------------------------------- |
-| GET    | `/api/customers`     | List customers (filter by `status`, `search`)  |
-| GET    | `/api/customers/:id` | Get customer + appointments + activity history |
-| POST   | `/api/customers`     | Create customer                                |
-| PATCH  | `/api/customers/:id` | Update customer                                |
-| DELETE | `/api/customers/:id` | Delete customer                                |
-
-#### Analytics
-
-| Method | Path                       | Description                    |
-| ------ | -------------------------- | ------------------------------ |
-| GET    | `/api/analytics/dashboard` | KPI stats for dashboard        |
-| GET    | `/api/analytics/pipeline`  | Pipeline value by stage        |
-| GET    | `/api/analytics/revenue`   | Revenue by month               |
-| POST   | `/api/analytics/track`     | Track frontend event (no auth) |
-
----
-
-## Part 5 — Testing API endpoints in VS Code
-
-Open `api.http` in VS Code (requires REST Client extension):
-
-1. Replace `YOUR_SUPABASE_JWT_TOKEN_HERE` with a real token
-2. Replace UUID placeholders with real IDs from your database
-3. Click **"Send Request"** above any request block
-
----
-
-## Part 6 — Deploying to Vercel
-
-### Step 1: Install Vercel CLI
-
-```bash
-npm install -g vercel
-```
-
-### Step 2: Login
-
-```bash
-vercel login
-```
-
-### Step 3: Link your project
-
-```bash
-vercel link
-```
-
-### Step 4: Add environment variables to Vercel
-
-```bash
-vercel env add SUPABASE_URL`
-vercel env add SUPABASE_ANON_KEY
-vercel env add SUPABASE_SERVICE_ROLE_KEY
-vercel env add JWT_SECRET
-vercel env add SMTP_HOST
-vercel env add SMTP_USER
-vercel env add SMTP_PASS
-vercel env add GA_MEASUREMENT_ID
-vercel env add GA_API_SECRET
-vercel env add NODE_ENV   # set to: production
-```
-
-Or set them in the Vercel dashboard under **Project → Settings → Environment Variables**.
-
-### Step 5: Deploy
-
-```bash
-vercel --prod
-```
-
-Your app is live at `https://coaching-pj.vercel.app` (or your custom domain).
-
----
-
-## Part 7 — GitHub & CI/CD Setup
-
-### Step 1: Create a GitHub repository
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/your-username/nexus-crm.git
-git push -u origin main
-```
-
-### Step 2: Add GitHub Secrets
-
-Go to your repo → **Settings → Secrets and Variables → Actions** and add:
-
-| Secret                      | Value                                            |
-| --------------------------- | ------------------------------------------------ |
-| `VERCEL_TOKEN`              | From vercel.com → Account Settings → Tokens      |
-| `SUPABASE_URL`              | Your Supabase project URL                        |
-| `SUPABASE_ANON_KEY`         | Supabase anon key                                |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key                        |
-| `CODECOV_TOKEN`             | From codecov.io (optional, for coverage reports) |
-
-### Step 3: CI/CD pipeline runs automatically
-
-Every push to `main` will:
-
-1. Run ESLint
-2. Run Jest tests on Node 18 & 20
-3. Run `npm audit` security check
-4. Deploy to Vercel production if all checks pass
-
-Pull requests get a preview deployment automatically.
-
----
-
-## Part 8 — SEO Configuration
-
-The app includes built-in SEO features:
-
-- **`/robots.txt`** — auto-generated, blocks `/api/` from crawlers
-- **`/sitemap.xml`** — dynamic XML sitemap with all public pages
-- **Helmet.js** — sets security headers (`X-Frame-Options`, `X-Content-Type-Options`, CSP)
-- **Compression** — gzip compression for all responses
-- **Static file caching** — 1-day cache headers on assets in production
-
-To add Open Graph meta tags for the frontend, edit `public/index.html`:
-
-```html
-<meta property="og:title" content="Nexus CRM" />
-<meta
-  property="og:description"
-  content="Appointment booking and customer management"
-/>
-<meta property="og:image" content="https://nexuscrm.io/og-image.png" />
-<meta property="og:url" content="https://nexuscrm.io" />
-<meta name="twitter:card" content="summary_large_image" />
-```
-
----
-
-## Part 9 — Available npm Scripts
-
-```bash
-npm run dev       # Start with nodemon (auto-restart on file save)
-npm start         # Start production server
-npm test          # Run Jest tests with coverage
-npm run lint      # Run ESLint
-npm run seed      # Populate database with sample data
-```
-
----
-
-## Part 10 — Cron Jobs
-
-The reminder service runs automatically inside the server process:
-
-| Schedule             | Job                                                      |
-| -------------------- | -------------------------------------------------------- |
-| Every day at 8:00 AM | Send email reminders for appointments scheduled tomorrow |
-
-On Vercel (serverless), use **Vercel Cron Jobs** instead. Add to `vercel.json`:
-
-```json
-{
-  "crons": [
-    {
-      "path": "/api/cron/reminders",
-      "schedule": "0 8 * * *"
-    }
-  ]
-}
-```
-
-Then add a `GET /api/cron/reminders` route that calls `sendAppointmentReminders()`.
-
----
-
-## License
-
-MIT
-   
  
