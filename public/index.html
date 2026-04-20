@@ -1591,12 +1591,16 @@
           data.user.email || "User";
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("appScreen").style.display = "block";
+        if (typeof gtag === "function")
+          gtag("event", "login", { method: "email" });
+        if (typeof gtag === "function")
+          gtag("event", "login", { method: "email" });
         loadDashboard();
       }
 
       async function doLogout() {
         await sb.auth.signOut();
-        accessToken = null;
+
         document.getElementById("appScreen").style.display = "none";
         document.getElementById("loginScreen").style.display = "flex";
         document.getElementById("loginPassword").value = "";
@@ -1939,6 +1943,8 @@
         btn.textContent = "Create";
         if (result) {
           closeModal();
+
+          if (typeof gtag === "function") gtag("event", "customer_created");
           showToast("Customer created!");
           loadCustomers();
         } else showToast("Failed to create customer", true);
@@ -2009,6 +2015,8 @@
         btn.textContent = "Create";
         if (result) {
           closeModal();
+
+          if (typeof gtag === "function") gtag("event", "lead_created");
           showToast("Lead created!");
           loadLeads();
         } else showToast("Failed to create lead", true);
@@ -2076,6 +2084,8 @@
         btn.textContent = "Create";
         if (result) {
           closeModal();
+
+          if (typeof gtag === "function") gtag("event", "appointment_created");
           showToast("Appointment created!");
           if (currentPage === "appointments") loadAppointments();
           else loadDashboard();
@@ -2121,6 +2131,8 @@
         });
         closeConfirm();
         if (res.ok) {
+          if (typeof gtag === "function")
+            gtag("event", "record_deleted", { record_type: type });
           showToast(type.charAt(0).toUpperCase() + type.slice(1) + " deleted");
           if (type === "customer") loadCustomers();
           else if (type === "lead") loadLeads();
