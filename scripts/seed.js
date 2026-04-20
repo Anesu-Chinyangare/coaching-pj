@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 async function seed() {
-  console.log(" Seeding Anesu PJ database...\n");
+  console.log(" Seeding Coaching PJ database...\n");
   await supabase
     .from("appointments")
     .delete()
